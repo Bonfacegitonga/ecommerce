@@ -29,22 +29,23 @@ class ItemCard extends StatelessWidget {
           onClick();
         },
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: Container(
-                  margin: EdgeInsets.only(bottom: 10),
-                  padding: EdgeInsets.all(20),
+                  margin: const EdgeInsets.only(bottom: 10, top: 10),
+                  padding: const EdgeInsets.all(20),
                   width: double.infinity,
                   decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10)),
+                      // borderRadius: const BorderRadius.only(
+                      //     topLeft: Radius.circular(10),
+                      //     topRight: Radius.circular(10)),
                       color: Colors.white,
                       image: DecorationImage(
-                          image: NetworkImage(imageUrl), fit: BoxFit.fill))),
+                          image: NetworkImage(imageUrl), fit: BoxFit.contain))),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: Text(
                   productName.length > 20
                       ? '${productName.substring(0, 20)}...'
@@ -54,11 +55,14 @@ class ItemCard extends StatelessWidget {
                     fontSize: 17,
                   )),
             ),
-            Text(productCost,
-                style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold)),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text("ksh $productCost",
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold)),
+            ),
           ],
         ),
       ),

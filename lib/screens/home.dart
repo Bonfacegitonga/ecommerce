@@ -39,7 +39,7 @@ class _HomeState extends State<Home> {
           SearchBar(
             backgroundColor: MaterialStateProperty.all(Colors.white),
             overlayColor: MaterialStateProperty.all(Colors.white),
-            constraints: const BoxConstraints(maxWidth: 400, maxHeight: 40),
+            constraints: const BoxConstraints(maxWidth: 310, maxHeight: 40),
           ),
           const SizedBox(
             width: 5,
