@@ -38,6 +38,7 @@ dependencies:
   http: ^1.0.0
   grouped_list: ^5.1.2
   simple_grouped_listview: ^2.0.0
+  loading_indicator: ^3.1.0
 
 dev_dependencies:
   flutter_test:

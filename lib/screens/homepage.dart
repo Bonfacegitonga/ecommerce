@@ -1,12 +1,9 @@
 import 'dart:convert';
 
 import 'package:ecommerce/widgets/itemCard.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import 'package:grouped_list/grouped_list.dart';
-
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:http/http.dart' as http;
 
 class MyHomepage extends StatefulWidget {
@@ -17,6 +14,10 @@ class MyHomepage extends StatefulWidget {
 }
 
 class _MyHomepageState extends State<MyHomepage> {
+  List<dynamic> products = [];
+  List<dynamic> categories = [];
+  String selectedCategory = 'all';
+  bool isLoading = false;
   @override
   void initState() {
     super.initState();
@@ -24,11 +25,10 @@ class _MyHomepageState extends State<MyHomepage> {
     fetchCategory();
   }
 
-  List<dynamic> products = [];
-  List<dynamic> categories = [];
-  String selectedCategory = 'all';
-
   Future<void> fetchProducts(String? category) async {
+    setState(() {
+      isLoading = true;
+    });
     const baseUrl = 'https://fakestoreapi.com';
     final url = category != null
         ? '$baseUrl/products/category/$category'
@@ -39,6 +39,7 @@ class _MyHomepageState extends State<MyHomepage> {
     if (response.statusCode == 200) {
       setState(() {
         products = json.decode(response.body);
+        isLoading = false;
       });
     } else {
       throw Exception('Failed to fetch products');
@@ -62,9 +63,6 @@ class _MyHomepageState extends State<MyHomepage> {
     return Scaffold(
       body: Column(
         children: [
-          // const SizedBox(
-          //   height: 10,
-          // ),
           Padding(
             padding: const EdgeInsets.all(5),
             child: SingleChildScrollView(
@@ -129,26 +127,43 @@ class _MyHomepageState extends State<MyHomepage> {
               ),
             ),
           ),
-          Expanded(
-            child: OrientationBuilder(builder: (context, orientation) {
-              return GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount:
-                          orientation == Orientation.portrait ? 2 : 3,
-                      childAspectRatio: .90,
-                      mainAxisSpacing: 7,
-                      crossAxisSpacing: 7),
-                  itemCount: products.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final product = products[index];
-                    return ItemCard(
-                        imageUrl: product['image'],
-                        productName: product['title'],
-                        onClick: () {},
-                        productCost: product['price'].toString());
-                  });
-            }),
-          ),
+          // Positioned(child: child)
+          // Align()
+          isLoading
+              ? const Padding(
+                  padding: EdgeInsets.all(180.0),
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.lineSpinFadeLoader,
+
+                    /// Required, The loading type of the widget
+                    colors: [Colors.amber, Colors.orange, Colors.yellow],
+
+                    /// Optional, The color collections
+                    //strokeWidth: 0.5,
+                  ),
+                )
+              : Expanded(
+                  child: OrientationBuilder(builder: (context, orientation) {
+                    return GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                orientation == Orientation.portrait ? 2 : 3,
+                            childAspectRatio: .90,
+                            mainAxisSpacing: 7,
+                            crossAxisSpacing: 7),
+                        itemCount: products.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final product = products[index];
+                          return ItemCard(
+                            imageUrl: product['image'],
+                            productName: product['title'],
+                            onClick: () {},
+                            productCost: product['price'].toString(),
+                            rate: product['rating']['rate'].toString(),
+                          );
+                        });
+                  }),
+                ),
         ],
       ),
     );

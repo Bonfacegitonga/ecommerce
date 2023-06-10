@@ -5,6 +5,7 @@ class ItemCard extends StatelessWidget {
   final String productName;
   final String productCost;
   final Function onClick;
+  final String rate;
   // ignore: use_key_in_widget_constructors
   const ItemCard({
     Key? key,
@@ -12,6 +13,7 @@ class ItemCard extends StatelessWidget {
     required this.productName,
     required this.onClick,
     required this.productCost,
+    required this.rate,
   });
 
   @override
@@ -56,13 +58,62 @@ class ItemCard extends StatelessWidget {
                   )),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Text("ksh $productCost",
-                  style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold)),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("ksh $productCost",
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold)),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.star,
+                        size: 16,
+                        color: Colors.amber,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        rate,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
+            GestureDetector(
+              onTap: () {},
+              child: Container(
+                width: double.infinity,
+                height: 25,
+                margin: const EdgeInsets.all(7),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(5),
+                    bottomRight: Radius.circular(5),
+                  ),
+                  color: Colors.orange,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.45),
+                      spreadRadius: 2,
+                      blurRadius: 3,
+                      offset: const Offset(0, 2), // changes position of shadow
+                    ),
+                  ],
+                ),
+                child: const Center(
+                    child: Text(
+                  "Add to cart",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                )),
+              ),
+            )
           ],
         ),
       ),
