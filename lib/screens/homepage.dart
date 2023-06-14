@@ -1,10 +1,9 @@
-import 'dart:convert';
-
+import 'package:ecommerce/screens/product.dart';
+import 'package:ecommerce/utils/api.dart';
 import 'package:ecommerce/widgets/itemCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-import 'package:http/http.dart' as http;
 
 class MyHomepage extends StatefulWidget {
   const MyHomepage({super.key});
@@ -21,40 +20,33 @@ class _MyHomepageState extends State<MyHomepage> {
   @override
   void initState() {
     super.initState();
-    fetchProducts(null);
-    fetchCategory();
+    fetchProductsData(null);
+    fetchData();
   }
 
-  Future<void> fetchProducts(String? category) async {
+  Future<void> fetchProductsData(String? category) async {
     setState(() {
       isLoading = true;
     });
-    const baseUrl = 'https://fakestoreapi.com';
-    final url = category != null
-        ? '$baseUrl/products/category/$category'
-        : '$baseUrl/products';
-
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
+    try {
+      List<dynamic> fetchedProducts = await Api.fetchProducts(category);
       setState(() {
-        products = json.decode(response.body);
+        products = fetchedProducts;
         isLoading = false;
       });
-    } else {
-      throw Exception('Failed to fetch products');
+    } catch (e) {
+      print('Error fetching categories: $e');
     }
   }
 
-  Future<void> fetchCategory() async {
-    String url = 'https://fakestoreapi.com/products/categories';
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
+  Future<void> fetchData() async {
+    try {
+      List<dynamic> fetchedCategories = await Api.fetchCategory();
       setState(() {
-        categories = json.decode(response.body);
+        categories = fetchedCategories;
       });
-    } else {
-      throw Exception('Failed to fetch products');
+    } catch (e) {
+      print('Error fetching categories: $e');
     }
   }
 
@@ -80,7 +72,7 @@ class _MyHomepageState extends State<MyHomepage> {
                           setState(() {
                             selectedCategory = 'all';
                           });
-                          fetchProducts(null);
+                          fetchProductsData(null);
                         },
                         child: Container(
                           margin: const EdgeInsets.all(5),
@@ -104,7 +96,7 @@ class _MyHomepageState extends State<MyHomepage> {
                             setState(() {
                               selectedCategory = category;
                             });
-                            fetchProducts(category);
+                            fetchProductsData(category);
                           },
                           child: Container(
                             margin: const EdgeInsets.all(5),
@@ -157,7 +149,13 @@ class _MyHomepageState extends State<MyHomepage> {
                           return ItemCard(
                             imageUrl: product['image'],
                             productName: product['title'],
-                            onClick: () {},
+                            onClick: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ProductPage(product: product)));
+                            },
                             productCost: product['price'].toString(),
                             rate: product['rating']['rate'].toString(),
                           );

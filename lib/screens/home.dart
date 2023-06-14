@@ -5,6 +5,7 @@ import 'categories.dart';
 import 'feed.dart';
 import 'help.dart';
 import 'homepage.dart';
+import 'product.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -18,7 +19,7 @@ class _HomeState extends State<Home> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     MyHomepage(),
-    Categories(),
+    // ProductPage(),
     Account(),
     Feeds(),
     Help()
@@ -66,12 +67,12 @@ class _HomeState extends State<Home> {
             icon: Icon(Icons.home),
             label: "Home",
           ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.category),
+          //   label: "categories",
+          // ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.category),
-            label: "categories",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.feed),
+            icon: Icon(Icons.compass_calibration),
             label: "Feed",
           ),
           BottomNavigationBarItem(
