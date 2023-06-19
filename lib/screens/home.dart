@@ -20,8 +20,8 @@ class _HomeState extends State<Home> {
   static const List<Widget> _widgetOptions = <Widget>[
     MyHomepage(),
     // ProductPage(),
-    Account(),
     Feeds(),
+    Account(),
     Help()
   ];
 

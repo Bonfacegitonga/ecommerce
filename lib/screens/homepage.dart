@@ -2,7 +2,6 @@ import 'package:ecommerce/screens/product.dart';
 import 'package:ecommerce/utils/api.dart';
 import 'package:ecommerce/widgets/itemCard.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 
 class MyHomepage extends StatefulWidget {
@@ -127,11 +126,9 @@ class _MyHomepageState extends State<MyHomepage> {
                   child: LoadingIndicator(
                     indicatorType: Indicator.lineSpinFadeLoader,
 
-                    /// Required, The loading type of the widget
+                   
                     colors: [Colors.amber, Colors.orange, Colors.yellow],
 
-                    /// Optional, The color collections
-                    //strokeWidth: 0.5,
                   ),
                 )
               : Expanded(
