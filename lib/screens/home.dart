@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/cartItem.dart';
 import 'account.dart';
 import 'categories.dart';
 import 'feed.dart';
@@ -20,7 +21,7 @@ class _HomeState extends State<Home> {
   static const List<Widget> _widgetOptions = <Widget>[
     MyHomepage(),
     // ProductPage(),
-    Feeds(),
+    MyCart(),
     Account(),
     Help()
   ];
