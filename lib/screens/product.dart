@@ -1,27 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:localstore/localstore.dart';
 
-class ProductPage extends StatelessWidget {
-  final dynamic product;
+import '../modal/CartItem.dart';
+import '../modal/products.dart';
+import 'cartpage.dart';
+
+class ProductPage extends StatefulWidget {
+  final Item product;
   const ProductPage({super.key, required this.product});
+
+  @override
+  State<ProductPage> createState() => _ProductPageState();
+}
+
+class _ProductPageState extends State<ProductPage> {
+  final _items = <String, CartItems>{};
+  Future addToCart(String id, String title, DateTime time, bool done,
+      String imageUrl, double price) async {
+    final item = CartItems(
+        id: id,
+        title: title,
+        time: time,
+        done: done,
+        imageUrl: imageUrl,
+        price: price);
+    item.save();
+    _items.putIfAbsent(item.id, () => item);
+  }
+
+  Future deleteFromCart(String id) async {
+    final db = Localstore.instance;
+    return db.collection('myCart').doc(id).delete();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.black54,
+        title: const Text(
+          "Product Details",
+          style: TextStyle(color: Colors.white),
+        ),
         actions: [
-          SearchBar(
-            backgroundColor: MaterialStateProperty.all(Colors.white),
-            overlayColor: MaterialStateProperty.all(Colors.white),
-            constraints: const BoxConstraints(maxWidth: 310, maxHeight: 40),
-          ),
-          const SizedBox(
-            width: 5,
-          ),
+          // SearchBar(
+          //   backgroundColor: MaterialStateProperty.all(Colors.white),
+          //   overlayColor: MaterialStateProperty.all(Colors.white),
+          //   constraints: const BoxConstraints(maxWidth: 310, maxHeight: 40),
+          // ),
+          // const SizedBox(
+          //   width: 5,
+          // ),
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const Cart()));
+              },
               icon: const Icon(
-                Icons.shopping_cart,
+                Icons.shopping_cart_outlined,
+                color: Colors.white,
                 size: 35,
               ))
         ],
@@ -34,7 +71,7 @@ class ProductPage extends StatelessWidget {
               height: 20,
             ),
             Image.network(
-              product['image'],
+              widget.product.imageurl,
               fit: BoxFit.contain,
               height: 300,
             ),
@@ -44,7 +81,7 @@ class ProductPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    product['title'],
+                    widget.product.title,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -52,7 +89,7 @@ class ProductPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    product['description'],
+                    widget.product.description,
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey[600],
@@ -62,7 +99,7 @@ class ProductPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("ksh ${product['price']}",
+                      Text("ksh ${widget.product.price}",
                           style: const TextStyle(
                               color: Colors.black,
                               fontSize: 18,
@@ -72,16 +109,30 @@ class ProductPage extends StatelessWidget {
                             backgroundColor:
                                 MaterialStateProperty.all(Colors.orange)),
                         onPressed: () {
-                          // Add to Cart logic
+                          widget.product.isAddedToCart
+                              ? deleteFromCart(widget.product.id.toString())
+                              : addToCart(
+                                  widget.product.id.toString(),
+                                  widget.product.title,
+                                  DateTime.now(),
+                                  true,
+                                  widget.product.imageurl,
+                                  widget.product.price.toDouble());
+                          setState(() {
+                            widget.product.isAddedToCart =
+                                !widget.product.isAddedToCart;
+                          });
                         },
-                        child: const Row(
+                        child: Row(
                           children: [
                             Text(
-                              'Add to cart',
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.white),
+                              widget.product.isAddedToCart
+                                  ? "Remove"
+                                  : 'Add to cart',
+                              style: const TextStyle(
+                                  fontSize: 18, color: Colors.white),
                             ),
-                            Icon(
+                            const Icon(
                               Icons.shopping_cart,
                               size: 18,
                               color: Colors.white,
@@ -110,7 +161,7 @@ class ProductPage extends StatelessWidget {
                           ),
                           const SizedBox(width: 5),
                           Text(
-                            '${product['rating']['rate'].toString()} (${product['rating']['count'].toString()} users)',
+                            '${widget.product.rating.rate.toString()} (${widget.product.rating.count.toString()} users)',
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],

@@ -2,24 +2,19 @@ import 'package:flutter/material.dart';
 
 import '../utils/api.dart';
 
-class Categories extends StatefulWidget {
-  //final VoidCallback callback;
-  const Categories({
-    super.key,
-  });
+class CategoriesPage extends StatefulWidget {
+  const CategoriesPage({super.key});
 
   @override
-  State<Categories> createState() => _CategoriesState();
+  State<CategoriesPage> createState() => _CategoriesPageState();
 }
 
-class _CategoriesState extends State<Categories> {
+class _CategoriesPageState extends State<CategoriesPage> {
   List<dynamic> categories = [];
-
   @override
   void initState() {
-    // Api.fetchCategory(categories);
-    super.initState();
     fetchData();
+    super.initState();
   }
 
   Future<void> fetchData() async {
@@ -29,43 +24,32 @@ class _CategoriesState extends State<Categories> {
         categories = fetchedCategories;
       });
     } catch (e) {
-      print('Error fetching categories: $e');
+      //print('Error fetching categories: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Row(
-        children: [
-          Container(
-            margin: const EdgeInsets.all(5),
-            height: double.maxFinite,
-            width: 125,
-            decoration: const BoxDecoration(color: Colors.green),
-            child: Column(children: [
-              Expanded(
-                child: ListView.builder(
-                    itemCount: categories.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final category = categories[index];
-                      return ListTile(
-                        title: Text(category.toString()),
-                      );
-                    }),
-              ),
-            ]),
-          ),
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.all(5),
-              height: double.maxFinite,
-              width: 30,
-              decoration: const BoxDecoration(color: Colors.yellow),
+        // appBar: AppBar(
+        //   title: Text('Product Categories'),
+        // ),
+        body: ListView.builder(
+      itemCount: categories.length,
+      itemBuilder: (context, index) {
+        final category = categories[index];
+        return ListTile(
+          title: Text(category),
+          onTap: () {},
+          trailing: IconButton(
+            icon: const Icon(
+              Icons.arrow_forward_ios,
+              size: 15,
             ),
+            onPressed: () {},
           ),
-        ],
-      ),
-    );
+        );
+      },
+    ));
   }
 }

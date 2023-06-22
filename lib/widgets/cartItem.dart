@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 
 class MyCart extends StatelessWidget {
-  const MyCart({super.key});
+  final String imageUrl;
+  final String price;
+  final String name;
+  final Function onPress;
+  const MyCart(
+      {super.key,
+      required this.imageUrl,
+      required this.onPress,
+      required this.price,
+      required this.name});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       color: Colors.white,
+      elevation: 3,
       child: Wrap(
         children: [
           Row(
@@ -18,14 +28,14 @@ class MyCart extends StatelessWidget {
                     margin:
                         const EdgeInsets.only(bottom: 10, top: 10, left: 10),
                     padding: const EdgeInsets.all(20),
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                    decoration: BoxDecoration(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
                         //     topLeft: Radius.circular(10),
                         //     topRight: Radius.circular(10)),
                         color: Colors.white,
                         image: DecorationImage(
-                            image: NetworkImage(
-                                'https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg'),
+                            image: NetworkImage(imageUrl),
                             fit: BoxFit.contain))),
               ),
               const SizedBox(
@@ -33,18 +43,21 @@ class MyCart extends StatelessWidget {
               ),
               Container(
                 alignment: Alignment.center,
-                width: 100,
+                width: 150,
                 child: Column(
                   //direction: Axis.vertical,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Padding(
-                        padding: EdgeInsets.all(5),
-                        child: Text(
-                            "bag dfggshdsfghgs ahsdgshfgcccxcsdfdgfghg ahdg")),
+                        padding: const EdgeInsets.all(5),
+                        child: Text(name,
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400))),
                     Padding(
-                      padding: EdgeInsets.all(5),
-                      child: Text("ksh 1000",
+                      padding: const EdgeInsets.all(5),
+                      child: Text("ksh $price",
                           style: const TextStyle(
                               color: Colors.black,
                               fontSize: 18,
@@ -61,13 +74,15 @@ class MyCart extends StatelessWidget {
               Row(
                 children: [
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        onPress();
+                      },
                       icon: const Icon(
                         Icons.delete_outline,
                         color: Colors.orange,
                       )),
                   const SizedBox(
-                    width: 3,
+                    width: 1,
                   ),
                   const Text(
                     "REMOVE",

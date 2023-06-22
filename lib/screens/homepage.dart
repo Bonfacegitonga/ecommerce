@@ -1,8 +1,16 @@
+import 'dart:async';
+
 import 'package:ecommerce/screens/product.dart';
 import 'package:ecommerce/utils/api.dart';
 import 'package:ecommerce/widgets/itemCard.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:localstore/localstore.dart';
+
+import '../modal/CartItem.dart';
+import '../modal/products.dart';
+
+//import 'package:badges/badges.dart' as badges;
 
 class MyHomepage extends StatefulWidget {
   const MyHomepage({super.key});
@@ -12,12 +20,26 @@ class MyHomepage extends StatefulWidget {
 }
 
 class _MyHomepageState extends State<MyHomepage> {
-  List<dynamic> products = [];
+  final _db = Localstore.instance;
+  final _items = <String, CartItems>{};
+  List<Item> items = [];
+
+  List<Item> products = [];
   List<dynamic> categories = [];
   String selectedCategory = 'all';
   bool isLoading = false;
+
   @override
   void initState() {
+    _db.collection('myCart').get().then((value) {
+      setState(() {
+        value?.entries.forEach((element) {
+          final item = CartItems.fromMap(element.value);
+          _items.putIfAbsent(item.id, () => item);
+        });
+      });
+    });
+
     super.initState();
     fetchProductsData(null);
     fetchData();
@@ -28,7 +50,7 @@ class _MyHomepageState extends State<MyHomepage> {
       isLoading = true;
     });
     try {
-      List<dynamic> fetchedProducts = await Api.fetchProducts(category);
+      final fetchedProducts = await Api.fetchProducts(category);
       setState(() {
         products = fetchedProducts;
         isLoading = false;
@@ -49,6 +71,34 @@ class _MyHomepageState extends State<MyHomepage> {
     }
   }
 
+  Future<void> toggleCartItem(int itemId) async {
+    final itemIndex = products.indexWhere((item) => item.id == itemId);
+    if (itemIndex != -1) {
+      final isAddedToCart = products[itemIndex].isAddedToCart;
+      setState(() {
+        products[itemIndex].isAddedToCart = !isAddedToCart;
+      });
+    }
+  }
+
+  Future addToCart(String id, String title, DateTime time, bool done,
+      String imageUrl, double price) async {
+    final item = CartItems(
+        id: id,
+        title: title,
+        time: time,
+        done: done,
+        imageUrl: imageUrl,
+        price: price);
+    item.save();
+    _items.putIfAbsent(item.id, () => item);
+  }
+
+  Future deleteFromCart(String id) async {
+    final db = Localstore.instance;
+    return db.collection('myCart').doc(id).delete();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +111,7 @@ class _MyHomepageState extends State<MyHomepage> {
               child: Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                    color: Colors.grey[200],
+                    //color: Colors.grey[200],
                     borderRadius: BorderRadius.circular(6)),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -74,18 +124,21 @@ class _MyHomepageState extends State<MyHomepage> {
                           fetchProductsData(null);
                         },
                         child: Container(
-                          margin: const EdgeInsets.all(5),
+                          margin: const EdgeInsets.all(2),
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: selectedCategory == 'all'
+                                  ? Colors.orange
+                                  : Colors.grey),
                           child: Text(
                             'all',
                             style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: selectedCategory == 'all'
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                              color: selectedCategory == 'all'
-                                  ? Colors.orange
-                                  : Colors.black,
-                            ),
+                                fontSize: 16,
+                                fontWeight: selectedCategory == 'all'
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                color: Colors.white),
                           ),
                         ),
                       ),
@@ -99,17 +152,20 @@ class _MyHomepageState extends State<MyHomepage> {
                           },
                           child: Container(
                             margin: const EdgeInsets.all(5),
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: selectedCategory == category
+                                    ? Colors.orange
+                                    : Colors.grey),
                             child: Text(
                               category.toString(),
                               style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: selectedCategory == category
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                                color: selectedCategory == category
-                                    ? Colors.orange
-                                    : Colors.black,
-                              ),
+                                  fontSize: 16,
+                                  fontWeight: selectedCategory == category
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                  color: Colors.white),
                             ),
                           ),
                         ),
@@ -125,10 +181,7 @@ class _MyHomepageState extends State<MyHomepage> {
                   padding: EdgeInsets.all(180.0),
                   child: LoadingIndicator(
                     indicatorType: Indicator.lineSpinFadeLoader,
-
-                   
                     colors: [Colors.amber, Colors.orange, Colors.yellow],
-
                   ),
                 )
               : Expanded(
@@ -144,8 +197,20 @@ class _MyHomepageState extends State<MyHomepage> {
                         itemBuilder: (BuildContext context, int index) {
                           final product = products[index];
                           return ItemCard(
-                            imageUrl: product['image'],
-                            productName: product['title'],
+                            onAddToCart: () {
+                              product.isAddedToCart
+                                  ? deleteFromCart(product.id.toString())
+                                  : addToCart(
+                                      product.id.toString(),
+                                      product.title,
+                                      DateTime.now(),
+                                      true,
+                                      product.imageurl,
+                                      product.price);
+                              toggleCartItem(product.id);
+                            },
+                            imageUrl: product.imageurl,
+                            productName: product.title,
                             onClick: () {
                               Navigator.push(
                                   context,
@@ -153,8 +218,11 @@ class _MyHomepageState extends State<MyHomepage> {
                                       builder: (context) =>
                                           ProductPage(product: product)));
                             },
-                            productCost: product['price'].toString(),
-                            rate: product['rating']['rate'].toString(),
+                            productCost: product.price.toString(),
+                            rate: product.rating.rate.toString(),
+                            isInCart: product.isAddedToCart
+                                ? "Remove"
+                                : "Add to Cart",
                           );
                         });
                   }),

@@ -5,7 +5,9 @@ class ItemCard extends StatelessWidget {
   final String productName;
   final String productCost;
   final Function onClick;
+  final Function onAddToCart;
   final String rate;
+  final String isInCart;
   // ignore: use_key_in_widget_constructors
   const ItemCard({
     Key? key,
@@ -14,6 +16,8 @@ class ItemCard extends StatelessWidget {
     required this.onClick,
     required this.productCost,
     required this.rate,
+    required this.onAddToCart,
+    required this.isInCart,
   });
 
   @override
@@ -85,7 +89,9 @@ class ItemCard extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                onAddToCart();
+              },
               child: Container(
                 width: double.infinity,
                 height: 25,
@@ -105,10 +111,11 @@ class ItemCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const Center(
+                child: Center(
                     child: Text(
-                  "Add to cart",
-                  style: TextStyle(
+                  isInCart,
+                  style: const TextStyle(
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 )),

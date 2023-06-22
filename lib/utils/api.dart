@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../modal/products.dart';
+
 class Api {
   static Future<List<dynamic>> fetchCategory() async {
     String url = 'https://fakestoreapi.com/products/categories';
@@ -13,7 +15,7 @@ class Api {
     }
   }
 
-  static Future<List<dynamic>> fetchProducts(String? category) async {
+  static Future<List<Item>> fetchProducts(String? category) async {
     const baseUrl = 'https://fakestoreapi.com';
     final url = category != null
         ? '$baseUrl/products/category/$category'
@@ -23,7 +25,9 @@ class Api {
 
     if (response.statusCode == 200) {
       List<dynamic> products = json.decode(response.body);
-      return products;
+      final List<Item> items =
+          products.map((item) => Item.fromJson(item)).toList();
+      return items;
     } else {
       throw Exception('Failed to fetch products');
     }
