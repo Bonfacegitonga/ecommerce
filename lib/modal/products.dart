@@ -1,3 +1,5 @@
+import 'package:localstore/localstore.dart';
+
 class Item {
   final int id;
   final String title;
@@ -27,6 +29,17 @@ class Item {
       price: json['price'].toDouble(),
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      //'time': time.millisecondsSinceEpoch,
+      'done': isAddedToCart,
+      'price': price,
+      'imageUrl': imageurl
+    };
+  }
 }
 
 class Rating {
@@ -40,5 +53,17 @@ class Rating {
       rate: json['rate'].toDouble(),
       count: json['count'],
     );
+  }
+}
+
+extension ExtTodo on Item {
+  Future save() async {
+    final db = Localstore.instance;
+    return db.collection('myCart').doc(id.toString()).set(toMap());
+  }
+
+  Future delete() async {
+    final db = Localstore.instance;
+    return db.collection('myCart').doc(id.toString()).delete();
   }
 }

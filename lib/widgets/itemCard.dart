@@ -1,27 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../modal/cartprovider.dart';
+import '../modal/products.dart';
 
 class ItemCard extends StatelessWidget {
-  final String imageUrl;
-  final String productName;
-  final String productCost;
+  final Item item;
+  // final String imageUrl;
+  // final String productName;
+  // final String productCost;
   final Function onClick;
   final Function onAddToCart;
-  final String rate;
-  final String isInCart;
+  // final String rate;
+  //final String isInCart;
   // ignore: use_key_in_widget_constructors
   const ItemCard({
     Key? key,
-    required this.imageUrl,
-    required this.productName,
+    required this.item,
+    // required this.imageUrl,
+    // required this.productName,
     required this.onClick,
-    required this.productCost,
-    required this.rate,
+    // required this.productCost,
+    // required this.rate,
     required this.onAddToCart,
-    required this.isInCart,
+    //required this.isInCart,
   });
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<ItemsProvider>(context);
+    final isInCart =
+        cartProvider.cartItems.any((items) => items.product.id == item.id);
     return Card(
       color: Colors.white,
       surfaceTintColor: Colors.white,
@@ -48,14 +57,15 @@ class ItemCard extends StatelessWidget {
                       //     topRight: Radius.circular(10)),
                       color: Colors.white,
                       image: DecorationImage(
-                          image: NetworkImage(imageUrl), fit: BoxFit.contain))),
+                          image: NetworkImage(item.imageurl),
+                          fit: BoxFit.contain))),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               child: Text(
-                  productName.length > 20
-                      ? '${productName.substring(0, 20)}...'
-                      : productName,
+                  item.title.length > 20
+                      ? '${item.title.substring(0, 20)}...'
+                      : item.title,
                   style: const TextStyle(
                     color: Colors.black,
                     fontSize: 17,
@@ -66,7 +76,7 @@ class ItemCard extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("ksh $productCost",
+                  Text("ksh ${item.price}",
                       style: const TextStyle(
                           color: Colors.black,
                           fontSize: 18,
@@ -80,7 +90,7 @@ class ItemCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 5),
                       Text(
-                        rate,
+                        item.rating.rate.toString(),
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -90,7 +100,11 @@ class ItemCard extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                onAddToCart();
+                if (isInCart) {
+                  cartProvider.removeFromCart(item);
+                } else {
+                  cartProvider.addToCart(item);
+                }
               },
               child: Container(
                 width: double.infinity,
@@ -113,7 +127,7 @@ class ItemCard extends StatelessWidget {
                 ),
                 child: Center(
                     child: Text(
-                  isInCart,
+                  isInCart ? "Remove" : "Add to cart",
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:localstore/localstore.dart';
+import 'package:provider/provider.dart';
 
+import '../modal/cartprovider.dart';
 import '../widgets/cartItem.dart';
 import 'account.dart';
 import 'cartpage.dart';
@@ -42,6 +44,8 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<ItemsProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black54,
@@ -56,23 +60,27 @@ class _HomeState extends State<Home> {
           ),
           Padding(
             padding: const EdgeInsets.only(top: 5, right: 15),
-            child: badges.Badge(
-              badgeContent: const Text('2'),
-              badgeStyle: const badges.BadgeStyle(
-                badgeColor: Colors.white,
-                elevation: 0,
-              ),
-              child: IconButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Cart()));
-                  },
-                  icon: const Icon(
-                    Icons.shopping_cart_outlined,
-                    size: 35,
-                    color: Colors.white,
-                  )),
-            ),
+            child: Consumer<ItemsProvider>(
+                builder: (context, cartItemsProvider, child) {
+              int cartitemCount = cartProvider.cartItemCount;
+              return badges.Badge(
+                badgeContent: Text(cartitemCount.toString()),
+                badgeStyle: const badges.BadgeStyle(
+                  badgeColor: Colors.white,
+                  elevation: 0,
+                ),
+                child: IconButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Cart()));
+                    },
+                    icon: const Icon(
+                      Icons.shopping_cart_outlined,
+                      size: 35,
+                      color: Colors.white,
+                    )),
+              );
+            }),
           ),
         ],
       ),

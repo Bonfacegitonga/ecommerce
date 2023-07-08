@@ -6,8 +6,10 @@ import 'package:ecommerce/widgets/itemCard.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:localstore/localstore.dart';
+import 'package:provider/provider.dart';
 
 import '../modal/CartItem.dart';
+import '../modal/cartprovider.dart';
 import '../modal/products.dart';
 
 //import 'package:badges/badges.dart' as badges;
@@ -21,7 +23,7 @@ class MyHomepage extends StatefulWidget {
 
 class _MyHomepageState extends State<MyHomepage> {
   final _db = Localstore.instance;
-  final _items = <String, CartItems>{};
+  final _items = <String, Item>{};
   List<Item> items = [];
 
   List<Item> products = [];
@@ -31,14 +33,14 @@ class _MyHomepageState extends State<MyHomepage> {
 
   @override
   void initState() {
-    _db.collection('myCart').get().then((value) {
-      setState(() {
-        value?.entries.forEach((element) {
-          final item = CartItems.fromMap(element.value);
-          _items.putIfAbsent(item.id, () => item);
-        });
-      });
-    });
+    // _db.collection('myCart').get().then((value) {
+    //   setState(() {
+    //     value?.entries.forEach((element) {
+    //       final item = Item.fromJson(element.value);
+    //       _items.putIfAbsent(item.id.toString(), () => item);
+    //     });
+    //   });
+    // });
 
     super.initState();
     fetchProductsData(null);
@@ -81,26 +83,21 @@ class _MyHomepageState extends State<MyHomepage> {
     }
   }
 
-  Future addToCart(String id, String title, DateTime time, bool done,
-      String imageUrl, double price) async {
-    final item = CartItems(
-        id: id,
-        title: title,
-        time: time,
-        done: done,
-        imageUrl: imageUrl,
-        price: price);
-    item.save();
-    _items.putIfAbsent(item.id, () => item);
+  Future addToCart(Item item) async {
+    // item;
+
+    // item.save();
+    // _items.putIfAbsent(item.id.toString(), () => item);
   }
 
-  Future deleteFromCart(String id) async {
-    final db = Localstore.instance;
-    return db.collection('myCart').doc(id).delete();
-  }
+  // Future deleteFromCart(String id) async {
+  //   final db = Localstore.instance;
+  //   return db.collection('myCart').doc(id).delete();
+  // }
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<ItemsProvider>(context);
     return Scaffold(
       body: Column(
         children: [
@@ -196,21 +193,17 @@ class _MyHomepageState extends State<MyHomepage> {
                         itemCount: products.length,
                         itemBuilder: (BuildContext context, int index) {
                           final product = products[index];
+                          final isInCart = cartProvider.cartItems
+                              .any((item) => item.product.id == product.id);
                           return ItemCard(
                             onAddToCart: () {
-                              product.isAddedToCart
-                                  ? deleteFromCart(product.id.toString())
-                                  : addToCart(
-                                      product.id.toString(),
-                                      product.title,
-                                      DateTime.now(),
-                                      true,
-                                      product.imageurl,
-                                      product.price);
-                              toggleCartItem(product.id);
+                              isInCart
+                                  ? cartProvider.removeFromCart(product)
+                                  : addToCart(product);
+                              //toggleCartItem(product.id);
                             },
-                            imageUrl: product.imageurl,
-                            productName: product.title,
+                            // imageUrl: product.imageurl,
+                            // productName: product.title,
                             onClick: () {
                               Navigator.push(
                                   context,
@@ -218,11 +211,13 @@ class _MyHomepageState extends State<MyHomepage> {
                                       builder: (context) =>
                                           ProductPage(product: product)));
                             },
-                            productCost: product.price.toString(),
-                            rate: product.rating.rate.toString(),
-                            isInCart: product.isAddedToCart
-                                ? "Remove"
-                                : "Add to Cart",
+                            // productCost: product.price.toString(),
+                            // rate: product.rating.rate.toString(),
+                            // isInCart: product.isAddedToCart
+                            //     ? "Remove"
+                            //     : "Add to Cart",
+
+                            item: product,
                           );
                         });
                   }),

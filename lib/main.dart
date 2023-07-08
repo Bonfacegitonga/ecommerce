@@ -1,10 +1,14 @@
 import 'package:ecommerce/screens/home.dart';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'modal/cartprovider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+      create: (context) => ItemsProvider(), child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

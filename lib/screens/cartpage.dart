@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:localstore/localstore.dart';
+import 'package:provider/provider.dart';
 
 import '../modal/CartItem.dart';
+import '../modal/cartprovider.dart';
+import '../modal/products.dart';
 import '../widgets/cartItem.dart';
 import 'home.dart';
 import 'homepage.dart';
@@ -17,18 +20,19 @@ class Cart extends StatefulWidget {
 
 class _CartState extends State<Cart> {
   final _db = Localstore.instance;
-  final _items = <String, CartItems>{};
+  final _items = <String, Item>{};
+  ItemsProvider itemsProvider = ItemsProvider();
 
   @override
   void initState() {
-    _db.collection('myCart').get().then((value) {
-      setState(() {
-        value?.entries.forEach((element) {
-          final item = CartItems.fromMap(element.value);
-          _items.putIfAbsent(item.id, () => item);
-        });
-      });
-    });
+    // _db.collection('myCart').get().then((value) {
+    //   setState(() {
+    //     value?.entries.forEach((element) {
+    //       final item = Item.fromJson(element.value);
+    //       _items.putIfAbsent(item.id.toString(), () => item);
+    //     });
+    //   });
+    // });
 
     // _subscription = _db.collection('myCart').stream.listen((event) {
     //   setState(() {
@@ -36,20 +40,14 @@ class _CartState extends State<Cart> {
     //     _items.putIfAbsent(item.id, () => item);
     //   });
     // });
-    print(_items.keys);
+    itemsProvider.fetchCartItems();
     super.initState();
-  }
-
-  double calculateTotalSum(Map<String, CartItems> items) {
-    double totalSum = 0.0;
-    items.values.forEach((item) {
-      totalSum += item.price;
-    });
-    return totalSum;
   }
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<ItemsProvider>(context, listen: true).fetchCartItems();
+    final cartProvider = Provider.of<ItemsProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -59,7 +57,7 @@ class _CartState extends State<Cart> {
         backgroundColor: Colors.black54,
         //centerTitle: true,
         actions: [
-          _items.isEmpty
+          cartProvider.cartItemCount == 0
               ? const SizedBox()
               : IconButton(
                   onPressed: () {
@@ -89,7 +87,7 @@ class _CartState extends State<Cart> {
               style: TextStyle(color: Colors.grey[900]),
             ),
           ),
-          _items.isEmpty
+          cartProvider.cartItemCount == 0
               ? Center(
                   child: Container(
                       margin: const EdgeInsets.only(top: 10),
@@ -105,7 +103,7 @@ class _CartState extends State<Cart> {
                   ),
                   subtitle: const Text("Delivery fees not included yet"),
                   trailing: Text(
-                    "Ksh ${calculateTotalSum(_items).toString()}",
+                    "Ksh ${cartProvider.totalPrice}",
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 16),
                   ),
@@ -113,7 +111,7 @@ class _CartState extends State<Cart> {
           const SizedBox(
             height: 5,
           ),
-          _items.isEmpty
+          cartProvider.cartItemCount == 0
               ? const SizedBox()
               : Container(
                   //margin: const EdgeInsets.only(top: 5),
@@ -122,26 +120,24 @@ class _CartState extends State<Cart> {
                   height: 40,
                   decoration: BoxDecoration(color: Colors.grey[100]),
                   child: Text(
-                    "Cart (${_items.keys.length.toString()})",
+                    "Cart (${cartProvider.cartItems.length.toString()})",
                     style: TextStyle(color: Colors.grey[900]),
                   )),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(5),
               child: ListView.builder(
-                  itemCount: _items.keys.length,
+                  itemCount: cartProvider.cartItems.length,
                   itemBuilder: (context, index) {
-                    final key = _items.keys.elementAt(index);
-                    final item = _items[key]!;
+                    final cartItem = cartProvider.cartItems[index];
+                    //final key = _items.keys.elementAt(index);
+                    // final item = _items[key]!;
                     return MyCart(
-                      imageUrl: item.imageUrl,
-                      name: item.title,
-                      price: item.price.toString(),
+                      imageUrl: cartItem.product.imageurl,
+                      name: cartItem.product.title,
+                      price: cartItem.product.price.toString(),
                       onPress: () {
-                        setState(() {
-                          item.delete();
-                          _items.remove(item.id);
-                        });
+                        cartProvider.removeFromCart(cartItem.product);
                       },
                     );
                   }),
@@ -150,7 +146,7 @@ class _CartState extends State<Cart> {
           Wrap(
             spacing: 10,
             children: [
-              _items.isEmpty
+              cartProvider.cartItemCount == 0
                   ? const SizedBox()
                   : Container(
                       margin: const EdgeInsets.only(top: 5, bottom: 10),
@@ -169,7 +165,7 @@ class _CartState extends State<Cart> {
                     ),
               GestureDetector(
                 onTap: () {
-                  _items.isEmpty
+                  cartProvider.cartItemCount == 0
                       ? Navigator.push(context,
                           MaterialPageRoute(builder: (context) => const Home()))
                       : null;
@@ -191,9 +187,9 @@ class _CartState extends State<Cart> {
                             color: Colors.white,
                           ),
                           Text(
-                            _items.isEmpty
+                            cartProvider.cartItemCount == 0
                                 ? "START SHOPPING"
-                                : "CHECKOUT ${calculateTotalSum(_items) == 0.0 ? '' : 'KSH ${calculateTotalSum(_items).toString()}'}",
+                                : "CHECKOUT ${cartProvider.totalPrice == 0.0 ? '' : 'KSH ${cartProvider.totalPrice}'}",
                             style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold),

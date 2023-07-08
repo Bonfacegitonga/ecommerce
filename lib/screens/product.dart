@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:localstore/localstore.dart';
+import 'package:provider/provider.dart';
 
 import '../modal/CartItem.dart';
+import '../modal/cartprovider.dart';
 import '../modal/products.dart';
 import 'cartpage.dart';
+import 'package:badges/badges.dart' as badges;
 
 class ProductPage extends StatefulWidget {
   final Item product;
@@ -14,18 +17,11 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
-  final _items = <String, CartItems>{};
-  Future addToCart(String id, String title, DateTime time, bool done,
-      String imageUrl, double price) async {
-    final item = CartItems(
-        id: id,
-        title: title,
-        time: time,
-        done: done,
-        imageUrl: imageUrl,
-        price: price);
+  final _items = <String, Item>{};
+  Future addToCart(Item item) async {
+    item;
     item.save();
-    _items.putIfAbsent(item.id, () => item);
+    _items.putIfAbsent(item.id.toString(), () => item);
   }
 
   Future deleteFromCart(String id) async {
@@ -35,6 +31,8 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<ItemsProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black54,
@@ -51,16 +49,30 @@ class _ProductPageState extends State<ProductPage> {
           // const SizedBox(
           //   width: 5,
           // ),
-          IconButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const Cart()));
-              },
-              icon: const Icon(
-                Icons.shopping_cart_outlined,
-                color: Colors.white,
-                size: 35,
-              ))
+          Padding(
+            padding: const EdgeInsets.only(top: 5, right: 15),
+            child: Consumer<ItemsProvider>(
+                builder: (context, cartItemsProvider, child) {
+              int cartitemCount = cartProvider.cartItemCount;
+              return badges.Badge(
+                badgeContent: Text(cartitemCount.toString()),
+                badgeStyle: const badges.BadgeStyle(
+                  badgeColor: Colors.white,
+                  elevation: 0,
+                ),
+                child: IconButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Cart()));
+                    },
+                    icon: const Icon(
+                      Icons.shopping_cart_outlined,
+                      size: 35,
+                      color: Colors.white,
+                    )),
+              );
+            }),
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -111,13 +123,7 @@ class _ProductPageState extends State<ProductPage> {
                         onPressed: () {
                           widget.product.isAddedToCart
                               ? deleteFromCart(widget.product.id.toString())
-                              : addToCart(
-                                  widget.product.id.toString(),
-                                  widget.product.title,
-                                  DateTime.now(),
-                                  true,
-                                  widget.product.imageurl,
-                                  widget.product.price.toDouble());
+                              : addToCart(widget.product);
                           setState(() {
                             widget.product.isAddedToCart =
                                 !widget.product.isAddedToCart;

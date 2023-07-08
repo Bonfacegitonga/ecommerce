@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'auth/login.dart';
+
 class Account extends StatefulWidget {
   const Account({super.key});
 
@@ -74,7 +76,10 @@ class _AccountState extends State<Account> {
             height: 5,
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const SignInScreen()));
+            },
             style: const ButtonStyle(
                 backgroundColor: MaterialStatePropertyAll(Colors.orange)),
             child: const Text(
