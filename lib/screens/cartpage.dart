@@ -1,15 +1,10 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:localstore/localstore.dart';
 import 'package:provider/provider.dart';
-
-import '../modal/CartItem.dart';
 import '../modal/cartprovider.dart';
 import '../modal/products.dart';
 import '../widgets/cartItem.dart';
 import 'home.dart';
-import 'homepage.dart';
 
 class Cart extends StatefulWidget {
   const Cart({super.key});
@@ -25,21 +20,6 @@ class _CartState extends State<Cart> {
 
   @override
   void initState() {
-    // _db.collection('myCart').get().then((value) {
-    //   setState(() {
-    //     value?.entries.forEach((element) {
-    //       final item = Item.fromJson(element.value);
-    //       _items.putIfAbsent(item.id.toString(), () => item);
-    //     });
-    //   });
-    // });
-
-    // _subscription = _db.collection('myCart').stream.listen((event) {
-    //   setState(() {
-    //     final item = CartItems.fromMap(event);
-    //     _items.putIfAbsent(item.id, () => item);
-    //   });
-    // });
     itemsProvider.fetchCartItems();
     super.initState();
   }

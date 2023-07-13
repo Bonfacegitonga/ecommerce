@@ -83,17 +83,7 @@ class _MyHomepageState extends State<MyHomepage> {
     }
   }
 
-  Future addToCart(Item item) async {
-    // item;
-
-    // item.save();
-    // _items.putIfAbsent(item.id.toString(), () => item);
-  }
-
-  // Future deleteFromCart(String id) async {
-  //   final db = Localstore.instance;
-  //   return db.collection('myCart').doc(id).delete();
-  // }
+  Future addToCart(Item item) async {}
 
   @override
   Widget build(BuildContext context) {
@@ -107,9 +97,8 @@ class _MyHomepageState extends State<MyHomepage> {
               scrollDirection: Axis.horizontal,
               child: Container(
                 padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                    //color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(6)),
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(6)),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -200,10 +189,7 @@ class _MyHomepageState extends State<MyHomepage> {
                               isInCart
                                   ? cartProvider.removeFromCart(product)
                                   : addToCart(product);
-                              //toggleCartItem(product.id);
                             },
-                            // imageUrl: product.imageurl,
-                            // productName: product.title,
                             onClick: () {
                               Navigator.push(
                                   context,
@@ -211,12 +197,6 @@ class _MyHomepageState extends State<MyHomepage> {
                                       builder: (context) =>
                                           ProductPage(product: product)));
                             },
-                            // productCost: product.price.toString(),
-                            // rate: product.rating.rate.toString(),
-                            // isInCart: product.isAddedToCart
-                            //     ? "Remove"
-                            //     : "Add to Cart",
-
                             item: product,
                           );
                         });
