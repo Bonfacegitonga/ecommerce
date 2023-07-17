@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:localstore/localstore.dart';
 import 'package:provider/provider.dart';
-
-import '../modal/CartItem.dart';
 import '../modal/cartprovider.dart';
 import '../modal/products.dart';
 

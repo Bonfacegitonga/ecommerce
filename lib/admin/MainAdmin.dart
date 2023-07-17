@@ -1,4 +1,6 @@
+import 'package:ecommerce/admin/productOut.dart';
 import 'package:ecommerce/modal/products.dart';
+import 'package:ecommerce/widgets/myContainer.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/api.dart';
@@ -50,85 +52,25 @@ class _AdminState extends State<Admin> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Container(
-                //margin: const EdgeInsets.only(left: 5, right: 3),
-                width: 185,
-                height: 130,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(6),
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment(0.8, 1),
-                    colors: <Color>[
-                      Color.fromARGB(255, 63, 9, 170),
-                      Color.fromARGB(255, 194, 8, 204),
-                    ], // Gradient from https://learnui.design/tools/gradient-generator.html
-                    tileMode: TileMode.mirror,
-                  ),
-                ),
-                child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "170",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        "Product In",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          // fontWeight: FontWeight.bold
-                        ),
-                      )
-                    ]),
-              ),
-              Container(
-                //margin: const EdgeInsets.only(right: 5),
-                width: 185,
-                height: 130,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment(0.8, 1),
-                      colors: <Color>[
-                        Color(0xff1f005c),
-                        Color(0xff5b0060),
-                        Color(0xff870160),
-                        Color(0xffac255e),
-                        Color(0xffca485c),
-                      ], // Gradient from https://learnui.design/tools/gradient-generator.html
-                      tileMode: TileMode.mirror,
-                    )),
-                child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "170",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        "Product In",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          // fontWeight: FontWeight.bold
-                        ),
-                      )
-                    ]),
+              const MyContainer(
+                  color: [
+                    Color.fromARGB(255, 63, 9, 170),
+                    Color.fromARGB(255, 194, 8, 204),
+                  ],
+                  myIcon: Icon(Icons.abc_outlined),
+                  text: "Product In",
+                  analytics: "208"),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ProductsOut()));
+                },
+                child: const MyContainer(color: [
+                  Color.fromARGB(255, 146, 5, 123),
+                  Color.fromARGB(255, 233, 155, 9),
+                ], text: "Product Out", analytics: "176"),
               )
             ],
           ),
@@ -148,7 +90,7 @@ class _AdminState extends State<Admin> {
                     Color(0xffca485c),
                     Color(0xffe16b5c),
                     Color(0xfff39060),
-                  ], // Gradient from https://learnui.design/tools/gradient-generator.html
+                  ],
                   tileMode: TileMode.mirror,
                 ),
               ),
