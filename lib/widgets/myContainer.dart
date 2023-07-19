@@ -5,19 +5,23 @@ class MyContainer extends StatelessWidget {
   final String analytics;
   final String text;
   final Widget myIcon;
+  final double width;
+  final double height;
 
   const MyContainer(
       {super.key,
       required this.color,
       required this.text,
       required this.analytics,
-      this.myIcon = const SizedBox()});
+      this.myIcon = const SizedBox(),
+      this.width = 185,
+      this.height = 130});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 185,
-      height: 130,
+      width: width,
+      height: height,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(6),
         gradient: LinearGradient(

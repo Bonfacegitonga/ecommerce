@@ -65,7 +65,7 @@ class _AdminState extends State<Admin> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const ProductsOut()));
+                          builder: (context) => const ProductOut()));
                 },
                 child: const MyContainer(color: [
                   Color.fromARGB(255, 146, 5, 123),
@@ -140,7 +140,7 @@ class _AdminState extends State<Admin> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(width: 0.4),
+                      border: Border.all(width: 1),
                     ),
                     child: Column(
                       children: [
@@ -168,7 +168,7 @@ class _AdminState extends State<Admin> {
                           width: double.maxFinite,
                           height: 77,
                           decoration: const BoxDecoration(
-                              border: Border(top: BorderSide(width: 0.3))),
+                              border: Border(top: BorderSide(width: 0.5))),
                           child: const Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
