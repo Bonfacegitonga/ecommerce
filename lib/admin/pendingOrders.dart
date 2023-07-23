@@ -1,3 +1,4 @@
+import 'package:ecommerce/widgets/orderContainer.dart';
 import 'package:flutter/material.dart';
 
 class PendingOrders extends StatefulWidget {
@@ -8,7 +9,7 @@ class PendingOrders extends StatefulWidget {
 }
 
 class _PendingOrdersState extends State<PendingOrders> {
-  List<dynamic> pendingOrders = [
+  List<Map<String, dynamic>> pendingOrders = [
     {
       'user': "bonfaceg@gmail.com",
       'products': [
@@ -44,8 +45,20 @@ class _PendingOrdersState extends State<PendingOrders> {
       appBar: AppBar(
         title: const Text("Pending Orders"),
       ),
-      body: Column(
-        children: [],
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                  itemCount: pendingOrders.length,
+                  itemBuilder: (context, index) {
+                    final pendingOrder = pendingOrders[index];
+                    return OrderContainer(order: pendingOrder);
+                  }),
+            )
+          ],
+        ),
       ),
     );
   }

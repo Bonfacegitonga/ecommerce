@@ -4,6 +4,7 @@ import 'package:ecommerce/widgets/myContainer.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/api.dart';
+import 'addProduct.dart';
 
 class Admin extends StatefulWidget {
   const Admin({super.key});
@@ -52,14 +53,10 @@ class _AdminState extends State<Admin> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              const MyContainer(
-                  color: [
-                    Color.fromARGB(255, 63, 9, 170),
-                    Color.fromARGB(255, 194, 8, 204),
-                  ],
-                  myIcon: Icon(Icons.abc_outlined),
-                  text: "Product In",
-                  analytics: "208"),
+              const MyContainer(color: [
+                Color.fromARGB(255, 63, 9, 170),
+                Color.fromARGB(255, 194, 8, 204),
+              ], text: "Product In", analytics: "208"),
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -94,25 +91,33 @@ class _AdminState extends State<Admin> {
                   tileMode: TileMode.mirror,
                 ),
               ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.add_circle_outline_outlined,
-                    color: Colors.white,
-                    size: 35,
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Text(
-                    "Add Product",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 25),
-                  )
-                ],
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AddProductScreen()));
+                },
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.add_circle_outline_outlined,
+                      color: Colors.white,
+                      size: 35,
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      "Add Product",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25),
+                    )
+                  ],
+                ),
               ),
             ),
           ),

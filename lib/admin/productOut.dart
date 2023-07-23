@@ -1,3 +1,4 @@
+import 'package:ecommerce/admin/pendingOrders.dart';
 import 'package:ecommerce/admin/productChart.dart';
 import 'package:ecommerce/widgets/myContainer.dart';
 import 'package:flutter/material.dart';
@@ -64,16 +65,28 @@ class _ProductOutState extends State<ProductOut> {
                       mainAxisSpacing: 7,
                       crossAxisSpacing: 7),
                   itemBuilder: (context, index) {
-                    return MyContainer(
-                        // width: 180,
-                        height: 90,
-                        color: containerItems[index]['color'],
-                        myIcon: Icon(
-                          containerItems[index]['icon'],
-                          color: Colors.white,
-                        ),
-                        text: containerItems[index]['name'],
-                        analytics: containerItems[index]['number']);
+                    return GestureDetector(
+                      onTap: () {
+                        if (containerItems[index]['name'] == 'Pending Orders') {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const PendingOrders()));
+                        } else {
+                          null;
+                        }
+                      },
+                      child: MyContainer(
+                          // width: 180,
+                          height: 90,
+                          color: containerItems[index]['color'],
+                          myIcon: Icon(
+                            containerItems[index]['icon'],
+                            color: Colors.white,
+                          ),
+                          text: containerItems[index]['name'],
+                          analytics: containerItems[index]['number']),
+                    );
                   })),
           const Text(
             "Order overview",
